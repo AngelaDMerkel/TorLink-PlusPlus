@@ -947,16 +947,16 @@
           </td>
           <td class="px-1 py-4 overflow-hidden">
             <div class="flex w-full justify-center gap-x-1 whitespace-nowrap overflow-hidden">
-              <button onclick="copyMagnet('${escapeHtml(magnet)}')" 
+              <button
                       class="px-1.5 py-1.5 text-[11px] rounded-md border border-[#575657] hover:bg-[#7B62D9]/20 flex items-center justify-center transition-colors" title="Copy magnet">
                 <i class="fa-solid fa-copy"></i>
               </button>
-              <button onclick="sendToBuiltin('${escapeHtml(infoHash)}', '${escapeHtml(title)}', '${escapeHtml(magnet)}', '${escapeHtml(source)}', ${Number.isFinite(size) ? size : 0})"
+              <button
                       class="px-1.5 py-1.5 text-[11px] rounded-md bg-[#7B62D9] hover:bg-[#A38DF2] hover:text-black flex items-center gap-x-1 transition-colors" title="Download with Torlink">
                 <i class="fa-solid fa-bolt"></i>
                 <span>TL</span>
               </button>
-              <button onclick="sendToQbit('${escapeHtml(magnet)}')" 
+              <button
                       class="px-1.5 py-1.5 text-[11px] rounded-md bg-[#4EBF5F] text-black hover:bg-[#A38DF2] flex items-center gap-x-1 transition-colors" title="Send to qBittorrent">
                 <i class="fa-solid fa-download"></i>
                 <span>QBT</span>
@@ -965,6 +965,9 @@
           </td>
         `;
         
+        tr.querySelector('button[title="Copy magnet"]').addEventListener('click', () => copyMagnet(magnet));
+        tr.querySelector('button[title="Download with Torlink"]').addEventListener('click', () => sendToBuiltin(infoHash, title, magnet, source, Number.isFinite(size) ? size : 0));
+        tr.querySelector('button[title="Send to qBittorrent"]').addEventListener('click', () => sendToQbit(magnet));
         tbody.appendChild(tr);
       });
     }
@@ -1066,12 +1069,13 @@
               <button onclick="downloadAction('${escapeHtml(item.id)}', '${isPaused ? 'resume' : 'pause'}')" class="px-1.5 py-1.5 text-[11px] rounded-md border border-[#575657] hover:bg-[#7B62D9]/20" title="${isPaused ? 'Resume' : 'Pause'}">
                 <i class="fa-solid ${isPaused ? 'fa-play' : 'fa-pause'}"></i>
               </button>
-              <button onclick="confirmStopDownload('${escapeHtml(item.id)}', '${escapeHtml(item.name || 'Unknown')}')" class="px-1.5 py-1.5 text-[11px] rounded-md bg-red-600 hover:bg-red-500" title="Stop and delete files">
+              <button class="px-1.5 py-1.5 text-[11px] rounded-md bg-red-600 hover:bg-red-500" title="Stop and delete files">
                 <i class="fa-solid fa-xmark"></i>
               </button>
             </div>
           </td>
         `;
+        tr.querySelector('button[title="Stop and delete files"]').addEventListener('click', () => confirmStopDownload(item.id, item.name || 'Unknown'));
         tbody.appendChild(tr);
       });
     }
