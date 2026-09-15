@@ -14,13 +14,13 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --tl-purple: #7B62D9;
-      --tl-purple-light: #A38DF2;
-      --tl-purple-muted: #766BBF;
-      --tl-green: #4EBF5F;
-      --tl-black: #0c0c0c;
-      --tl-gray: #575657;
-      --tl-white: #FFFFFF;
+      --tl-purple: #a78bfa;
+      --tl-purple-light: #d8b4fe;
+      --tl-purple-muted: #b9a7e6;
+      --tl-green: #86d6a2;
+      --tl-black: #0a0810;
+      --tl-gray: #9690a3;
+      --tl-white: #e9e4f5;
     }
     body {
       background: var(--tl-black);
@@ -64,35 +64,177 @@
     #tui-terminal .xterm-viewport::-webkit-scrollbar {
       display: none;
     }
+
+    /* Presentation only: preserve the original controls, IDs and JavaScript. */
+    .gui-shell.max-w-7xl { max-width: 1120px; }
+    .gui-shell { padding: 22px 24px 0; color: var(--tl-white); font-size: 13px; line-height: 22px; }
+    .gui-shell .gui-header { gap: 24px; padding: 0 0 16px; border-color: #6b6577; }
+    .gui-wordmark { display: flex; align-items: flex-end; gap: 10px; }
+    .gui-wordmark pre { margin: 0; font: 700 14px/1.04 Menlo, Consolas, monospace; }
+    .gui-wordmark .sprout { color: #5ae87a; }
+    .gui-wordmark .letters {
+      background: linear-gradient(173deg, #ffffff, #d8b4fe 15%, #a78bfa 40%, #7c5cd6 70%, #4c3a8a);
+      background-clip: text; -webkit-background-clip: text; color: transparent;
+    }
+    .gui-wordmark > span { color: var(--tl-purple); font-size: 18px; }
+    #tui-toggle-button { border: 0; padding: 8px 0; color: var(--tl-gray); }
+    #tui-toggle-prompt { color: var(--tl-purple); }
+    .gui-layout { display: grid; grid-template-columns: 132px minmax(0, 1fr); gap: 16px; padding: 18px 0; }
+    .gui-sidebar { display: flex; flex-direction: column; align-items: stretch; gap: 12px; padding-top: 5px; }
+    .gui-sidebar #search-type { width: 100%; height: 88px; padding: 0; border: 0; background: transparent; color: var(--tl-gray); font: inherit; }
+    #search-type option { padding: 3px 10px; border-left: 3px solid transparent; }
+    #search-type option:checked { background: var(--tl-black); color: var(--tl-purple-muted); border-color: #6b6577; }
+    #search-type:focus-visible option:checked { color: var(--tl-purple); border-color: var(--tl-purple); }
+    .gui-sidebar button { padding: 2px 10px; border: 0; border-radius: 0; background: transparent; color: var(--tl-gray); font-size: 12px; text-align: left; }
+    .gui-sidebar button:hover { background: #a78bfa0a; color: var(--tl-white); }
+    .gui-sidebar button i { color: var(--tl-purple-muted); }
+    .gui-layout:has(#search-controls.hidden) #search-type { display: none; }
+    .gui-layout:has(#queue-view:not(.hidden)) #queue-toggle-button,
+    .gui-layout:has(#settings-view:not(.hidden)) .gui-sidebar button[onclick="showSettingsView()"] { color: var(--tl-purple); }
+    .gui-content { min-width: 0; }
+    .gui-panel { min-width: 0; border: 1px solid #6b6577; border-radius: 7px; padding: 10px 12px; }
+    .gui-panel > legend { padding: 0 7px; color: #6b6577; font-size: 13px; font-weight: 600; }
+    #search-controls { padding: 0 12px 5px; margin-bottom: 14px; }
+    #search-controls > div { align-items: center; gap: 8px; }
+    #search-controls .search-prompt { color: var(--tl-purple); font-size: 14px; }
+    #search-controls input { background: transparent; border: 0; border-radius: 0; min-width: 0; padding: 2px 0; color: var(--tl-white); font-size: 13px; line-height: 22px; caret-color: var(--tl-purple-light); }
+    #search-controls input::placeholder { color: var(--tl-gray); opacity: 1; }
+    #search-controls button { padding: 2px 0; background: transparent; color: var(--tl-purple-muted); font-size: 12px; }
+    #search-view { padding: 5px 0 10px; min-height: 280px; }
+    #results-header { margin: 0 0 0 12px; padding: 0 7px; }
+    #results-header > span { color: inherit; font-size: inherit; }
+    #results-container { border: 0; border-radius: 0; background: transparent; }
+    #results-container thead, #queue-view thead { background: transparent; border: 0; }
+    #results-container th, #queue-view th { color: var(--tl-gray); font-size: 11px; font-weight: 600; padding-top: 4px; padding-bottom: 4px; }
+    #results-body .result-row, #queue-body .result-row { border: 0; }
+    #results-body .result-row:hover, #queue-body .result-row:hover { background: #a78bfa0a; }
+    #results-body td, #queue-body td { padding-top: 4px; padding-bottom: 4px; color: var(--tl-gray); font-size: 12px; }
+    #results-body td:first-child, #queue-body td:first-child { color: var(--tl-white); }
+    #results-body td:nth-child(2) { color: var(--tl-purple-muted); font-size: 11px; }
+    #results-body td:nth-child(4) span, #queue-body td:nth-child(3) { color: var(--tl-green); }
+    #results-body td:nth-child(5) span { color: var(--tl-purple-muted); }
+    #results-body button, #queue-body button { padding: 4px 5px; border: 1px solid #6b657766; border-radius: 3px; background: transparent; color: var(--tl-gray); }
+    #results-body button[title="Download with Torlink"], #queue-body button[title="Pause"], #queue-body button[title="Resume"] { color: var(--tl-purple); }
+    #results-body button[title="Send to qBittorrent"] { color: var(--tl-green); }
+    #queue-body button[title="Stop and delete files"] { color: #ee7d92; }
+    #empty-state, #queue-empty { align-items: flex-start; justify-content: flex-start; padding: 10px 12px; text-align: left; }
+    #empty-state > i, #queue-empty > i { display: none; }
+    #empty-state > div, #queue-empty > div { color: var(--tl-gray); font-size: 12px; }
+    #loading-state { align-items: flex-start; justify-content: flex-start; gap: 4px; padding: 10px 12px; color: var(--tl-purple-muted); }
+    #loading-state > div:first-child { display: none; }
+    #loading-message { font-size: 13px; font-weight: 400; }
+    #loading-elapsed { color: var(--tl-gray); }
+    #queue-view { padding: 5px 0 10px; min-height: 280px; }
+    #queue-view > legend { margin-left: 12px; }
+    #queue-view > div { background: transparent; border: 0; border-radius: 0; }
+    #settings-view { padding: 0; }
+    #settings-view > div:first-child { margin-bottom: 12px; }
+    #settings-view > div:first-child > div { color: var(--tl-white); font-size: 13px; }
+    #settings-view > div:nth-child(2) { background: transparent; border: 1px solid #6b6577; border-radius: 7px; }
+    #settings-view label, #settings-view .text-xs { color: var(--tl-gray); }
+    #settings-view input { min-width: 0; background: transparent; border-color: #6b6577; color: var(--tl-white); }
+    #settings-view input::placeholder { color: var(--tl-gray); }
+    #settings-view button { border: 1px solid #6b657766; background: transparent; color: var(--tl-purple-muted); font-size: 11px; }
+    #settings-view .border-t { border-color: #6b6577; }
+    #settings-download-dir { overflow-wrap: anywhere; }
+    .gui-footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px 20px; padding: 8px 0; border-top: 1px solid #6b6577; color: var(--tl-gray); font-size: 12px; }
+    .gui-footer span span { color: var(--tl-purple-muted); }
+    .gui-shell:has(#search-view.hidden) .gui-footer { display: none; }
+    .gui-layout:has(#web-tui-view:not(.hidden)) { grid-template-columns: minmax(0, 1fr); }
+    .gui-layout:has(#web-tui-view:not(.hidden)) .gui-sidebar { flex-direction: row; }
+    .gui-layout .tui-shell { padding: 0; min-height: 0; }
+    .gui-layout .tui-terminal-window { box-shadow: none; margin-bottom: 0; }
+    .gui-shell button:focus-visible, .gui-shell select:focus-visible, .gui-shell input:focus-visible { outline: 1px solid var(--tl-purple); outline-offset: 2px; }
+    .gui-shell #query:focus-visible { outline: none; }
+    #toast-container { max-width: calc(100vw - 32px); }
+    #toast-container .toast { overflow-wrap: anywhere; background: var(--tl-black); color: var(--tl-white); border: 1px solid #6b6577; border-radius: 4px; padding: 8px 12px; font-size: 12px; }
+    #toast-container .toast:has(.fa-check) { color: var(--tl-green); border-color: var(--tl-green); }
+    #toast-container .toast:has(.fa-exclamation) { color: #ee7d92; border-color: #ee7d92; }
+    @media (max-width: 800px) {
+      .gui-shell { padding: 20px 16px 0; }
+      .gui-layout { grid-template-columns: 110px minmax(0, 1fr); gap: 12px; }
+      #results-container colgroup, #results-container thead { display: none; }
+      #results-container table, #results-body { display: block; }
+      #results-body tr { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px 8px; padding: 10px 12px; }
+      #results-body td { display: block; padding: 0; text-align: left; }
+      #results-body td:first-child, #results-body td:last-child { grid-column: 1 / -1; }
+      #results-body td:last-child > div { justify-content: flex-start; margin-top: 4px; }
+      #results-body td:nth-child(4)::before { content: "S "; }
+      #results-body td:nth-child(5)::before { content: "P "; }
+      #settings-view .flex { flex-wrap: wrap; }
+      #settings-view #settings-api-key { flex-basis: 100%; }
+    }
+    @media (max-width: 580px) {
+      .gui-shell { padding: 20px 14px 0; }
+      .gui-shell .gui-header { gap: 12px; }
+      .gui-wordmark pre { font-size: 9px; }
+      .gui-wordmark > span { font-size: 14px; }
+      #tui-toggle-button { font-size: 11px; gap: 5px; }
+      .gui-layout { display: block; padding-top: 12px; }
+      .gui-sidebar { flex-direction: row; flex-wrap: wrap; align-items: center; padding: 0 0 14px; gap: 8px; }
+      .gui-sidebar #search-type { width: 120px; height: 76px; font-size: 12px; }
+      #search-type option { padding: 1px 8px; }
+      .gui-sidebar button { padding: 4px; font-size: 11px; }
+      #search-controls input { font-size: 16px; }
+      #results-body td { font-size: 11px; }
+      #results-body td:first-child { font-size: 12px; }
+      #queue-view colgroup, #queue-view thead { display: none; }
+      #queue-view table, #queue-body { display: block; }
+      #queue-body tr { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 12px; }
+      #queue-body td { padding: 0; font-size: 11px; text-align: left; }
+      #queue-body td:first-child, #queue-body td:last-child { grid-column: 1 / -1; }
+      #queue-body td:first-child { font-size: 12px; overflow-wrap: anywhere; }
+      #queue-body td:nth-child(4)::after { content: " peers"; }
+      #queue-body td:last-child > div { justify-content: flex-start; }
+      #settings-view input { width: 100%; font-size: 16px; }
+      #settings-view .max-w-2xl { padding: 12px; }
+      #toast-container { right: 16px; bottom: 16px; }
+    }
+    @media (pointer: coarse) {
+      .gui-shell button { min-height: 44px; }
+      #results-body button, #queue-body button { min-width: 44px; }
+      #search-type option { min-height: 44px; }
+      .gui-sidebar #search-type { height: 136px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .toast, .loading-progress { animation: none; }
+    }
   </style>
 </head>
 <body class="text-white">
-  <div class="max-w-7xl mx-auto">
+  <div class="max-w-7xl mx-auto gui-shell">
     <!-- Header -->
-    <div class="flex items-center justify-between px-8 py-5 border-b border-[#575657]">
-      <div class="flex items-center gap-x-4">
-        <img src="/torlink-plusplus-logo.png" alt="TorLink++" class="h-12 w-auto object-contain" width="311" height="62">
-        <div class="hidden sm:block text-[11px] text-[#A38DF2] tracking-wide">Torznab + qBittorrent</div>
+    <div class="flex items-center justify-between px-8 py-5 border-b border-[#575657] gui-header">
+      <div class="gui-wordmark" role="img" aria-label="TorLink++">
+        <pre aria-hidden="true"><span class="sprout">      𐓏
+</span><span class="letters"> ▀█▀ █▀█ █▀█ █   █ █▄ █ █▄▀
+  █  █▄█ █▀▄ █▄▄ █ █ ▀█ █ █</span></pre><span aria-hidden="true">++</span>
       </div>
       
       <div class="flex items-center gap-x-4 text-sm">
         <button id="tui-toggle-button" onclick="toggleTuiView()" class="cursor-pointer flex items-center gap-x-1.5 text-xs px-3 py-1.5 rounded-md border border-[#A38DF2] hover:bg-[#7B62D9]/20" title="Switch to Web TUI">
           <span id="tui-toggle-prompt" class="text-[#A38DF2] leading-none">&gt;_</span><span id="tui-toggle-label">Web TUI</span>
         </button>
-        <div class="flex items-center gap-x-2 bg-black px-3 py-1.5 rounded-md border border-[#575657]">
-          <div class="w-2 h-2 bg-[#4EBF5F] rounded-full animate-pulse"></div>
-          <span class="text-[#4EBF5F] text-xs font-medium">CONNECTED</span>
-        </div>
+      </div>
+    </div>
+
+    <div class="gui-layout">
+      <nav class="gui-sidebar" aria-label="Main navigation">
+        <select id="search-type" size="3" aria-label="Search mode" class="bg-black border border-[#766BBF] text-sm px-4 rounded-md outline-none text-white">
+          <option value="search">All</option>
+          <option value="movie" selected>Movies</option>
+          <option value="tvsearch">TV Shows</option>
+        </select>
         <button id="queue-toggle-button" onclick="toggleQueueView()" class="cursor-pointer flex items-center gap-x-2 text-xs px-3 py-1.5 rounded-md border border-[#575657] hover:bg-[#7B62D9]/20" title="Show Queue">
           <i id="queue-toggle-icon" class="fa-solid fa-list text-[#A38DF2]"></i>
           <span id="queue-toggle-label">Queue</span>
         </button>
         <button onclick="showSettingsView()" class="cursor-pointer flex items-center gap-x-2 text-xs px-3 py-1.5 rounded-md border border-[#575657] hover:bg-[#7B62D9]/20" title="Settings">
           <i class="fa-solid fa-gear text-[#A38DF2]"></i>
-          <span class="hidden md:inline">Settings</span>
+          <span>Settings</span>
         </button>
-      </div>
-    </div>
+      </nav>
+      <main class="gui-content">
 
     <!-- Web TUI -->
     <div id="web-tui-view" class="hidden tui-shell">
@@ -102,44 +244,38 @@
     </div>
 
     <!-- Search -->
-    <div id="search-controls" class="px-8 pt-8 pb-4">
+    <fieldset id="search-controls" class="px-8 pt-8 pb-4 gui-panel">
+      <legend>Search</legend>
       <div class="flex gap-3">
-        <div class="flex-1">
+        <span class="search-prompt" aria-hidden="true">❯</span>
+        <div class="flex-1 min-w-0">
           <input id="query" type="text" placeholder="Search movies, TV shows, anime..." 
+                 aria-label="Search torrents"
                  class="w-full bg-black border border-[#766BBF] focus:border-[#A38DF2] transition-colors text-lg px-5 py-3.5 rounded-md outline-none placeholder:text-[#575657]"
                  onkeypress="if (event.key === 'Enter') performSearch()">
         </div>
         
-        <select id="search-type" class="bg-black border border-[#766BBF] text-sm px-4 rounded-md outline-none text-white">
-          <option value="movie">Movies</option>
-          <option value="tvsearch">TV Shows</option>
-          <option value="search">All</option>
-        </select>
-        
         <button onclick="performSearch()" 
                 class="px-8 bg-[#7B62D9] hover:bg-[#A38DF2] hover:text-black transition-all font-medium rounded-md flex items-center gap-x-2">
-          <i class="fa-solid fa-search"></i>
-          <span>Search</span>
+          <span>Search ↵</span>
         </button>
       </div>
-    </div>
+    </fieldset>
 
     <!-- Results -->
-    <div id="search-view" class="px-8">
-      <div id="results-header" class="hidden flex items-center justify-between mb-3 px-1">
-        <div class="text-sm text-[#A38DF2]">
-          <span id="result-count"></span> results
-        </div>
-      </div>
+    <fieldset id="search-view" class="px-8 gui-panel">
+      <legend id="results-header" class="hidden flex items-center justify-between mb-3 px-1">
+        <span class="text-sm text-[#A38DF2]">Results (<span id="result-count"></span>)</span>
+      </legend>
 
       <div id="results-container" class="hidden bg-black border border-[#575657] rounded-md overflow-hidden">
         <table class="w-full table-fixed">
           <colgroup>
             <col>
+            <col style="width: 60px;">
             <col style="width: 72px;">
-            <col style="width: 88px;">
-            <col style="width: 72px;">
-            <col style="width: 64px;">
+            <col style="width: 60px;">
+            <col style="width: 56px;">
             <col style="width: 152px;">
           </colgroup>
           <thead class="bg-black border-b border-[#575657] text-xs">
@@ -160,15 +296,13 @@
       <div id="empty-state" class="flex flex-col items-center justify-center py-16 text-center">
         <i class="fa-solid fa-search text-5xl text-[#766BBF] mb-4"></i>
         <div class="text-lg text-[#A38DF2]">Search for movies, TV shows or anime</div>
-        <div class="text-xs text-[#575657] mt-1">If searches say Unauthorized, click Set API Key in the top right first.</div>
+        <div class="text-xs text-[#575657] mt-1">Choose a search mode, enter a title, and press Enter.</div>
       </div>
-    </div>
+    </fieldset>
 
     <!-- Built-in downloader queue -->
-    <div id="queue-view" class="hidden px-8 pt-8">
-      <div class="flex items-center justify-between mb-3 px-1">
-        <div class="text-sm text-[#A38DF2]"><span id="queue-count">0</span> queued downloads</div>
-      </div>
+    <fieldset id="queue-view" class="hidden px-8 pt-8 gui-panel">
+      <legend>Downloads (<span id="queue-count">0</span>)</legend>
       <div class="bg-black border border-[#575657] rounded-md overflow-hidden">
         <table class="w-full table-fixed">
           <colgroup>
@@ -195,7 +329,7 @@
         <div class="text-lg text-[#A38DF2]">No built-in downloader items yet</div>
         <div class="text-xs text-[#575657] mt-1">Use the TL button in search results to download to the mapped /downloads path.</div>
       </div>
-    </div>
+    </fieldset>
 
     <!-- Settings -->
     <div id="settings-view" class="hidden px-8 pt-8">
@@ -237,6 +371,12 @@
         </div>
       </div>
     </div>
+      </main>
+    </div>
+    <footer class="gui-footer">
+      <span><span>↵</span> Search</span>
+      <span><span>TL</span> Download &nbsp; · &nbsp; <span>QBT</span> Send to qBittorrent</span>
+    </footer>
   </div>
 
   <!-- Toast container -->
